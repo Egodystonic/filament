@@ -113,6 +113,9 @@ backend::Platform::DriverConfig getDriverConfig(FEngine* instance) {
                 instance->features.backend.opengl.assert_native_window_is_valid,
         .metalDisablePanicOnDrawableFailure =
                 instance->getConfig().metalDisablePanicOnDrawableFailure,
+        // === Begin TinyFFR Alteration ===
+        .disableVsync = instance->getConfig().disableVsync,
+        // === End TinyFFR Alteration ===
         .gpuContextPriority = instance->getConfig().gpuContextPriority,
         .vulkanEnableStagingBufferBypass =
                 instance->features.backend.vulkan.enable_staging_buffer_bypass,
@@ -163,9 +166,6 @@ Engine* FEngine::create(Builder const& builder) {
             return nullptr;
         }
         instance->mDriver = platform->createDriver(sharedContext, getDriverConfig(instance));
-                // === Begin TinyFFR Alteration ===
-                .disableVsync = instance->getConfig().disableVsync,
-                // === End TinyFFR Alteration ===
 
     } else {
         // start the driver thread
@@ -817,9 +817,6 @@ int FEngine::loop() {
     JobSystem::setThreadPriority(JobSystem::Priority::DISPLAY);
 
     mDriver = mPlatform->createDriver(mSharedGLContext, getDriverConfig(this));
-            // === Begin TinyFFR Alteration ===
-            .disableVsync = mConfig.disableVsync,
-            // === End TinyFFR Alteration ===
 
     mDriverBarrier.latch();
     if (UTILS_UNLIKELY(!mDriver)) {
